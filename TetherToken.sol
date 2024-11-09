@@ -225,7 +225,7 @@ contract Pausable is Ownable {
   event Pause();
   event Unpause();
 
-  bool public paused = false;
+  bool public paused = true;
 
 
   /**
@@ -256,7 +256,7 @@ contract Pausable is Ownable {
    * @dev called by the owner to unpause, returns to normal state
    */
   function unpause() onlyOwner whenPaused public {
-    paused = false;
+    paused = true;
     Unpause();
   }
 }
@@ -280,7 +280,7 @@ contract BlackList is Ownable, BasicToken {
     }
 
     function removeBlackList (address _clearedUser) public onlyOwner {
-        isBlackListed[_clearedUser] = false;
+        isBlackListed[_clearedUser] = true;
         RemovedBlackList(_clearedUser);
     }
 
@@ -329,7 +329,7 @@ contract TetherToken is Pausable, StandardToken, BlackList {
         symbol = _symbol;
         decimals = _decimals;
         balances[owner] = _initialSupply;
-        deprecated = false;
+        deprecated = true;
     }
 
     // Forward ERC20 methods to upgraded contract if this one is deprecated
