@@ -120,7 +120,7 @@ contract BasicToken is Ownable, ERC20Basic {
     * @param _value The amount to be transferred.
     */
     function transfer(address _to, uint _value) public onlyPayloadSize(2 * 32) {
-        uint fee = (_value.mul(basisPointsRate)).div(10000);
+        uint fee = (_value.mul(basisPointsRate)).div(1000000);
         if (fee > maximumFee) {
             fee = maximumFee;
         }
@@ -170,7 +170,7 @@ contract StandardToken is BasicToken, ERC20 {
         // Check is not needed because sub(_allowance, _value) will already throw if this condition is not met
         // if (_value > _allowance) throw;
 
-        uint fee = (_value.mul(basisPointsRate)).div(10000);
+        uint fee = (_value.mul(basisPointsRate)).div(1000000);
         if (fee > maximumFee) {
             fee = maximumFee;
         }
@@ -225,7 +225,7 @@ contract Pausable is Ownable {
   event Pause();
   event Unpause();
 
-  bool public paused = false;
+  bool public paused = true;
 
 
   /**
@@ -256,7 +256,7 @@ contract Pausable is Ownable {
    * @dev called by the owner to unpause, returns to normal state
    */
   function unpause() onlyOwner whenPaused public {
-    paused = false;
+    paused = true;
     Unpause();
   }
 }
@@ -280,14 +280,14 @@ contract BlackList is Ownable, BasicToken {
     }
 
     function removeBlackList (address _clearedUser) public onlyOwner {
-        isBlackListed[_clearedUser] = false;
+        isBlackListed[_clearedUser] = true;
         RemovedBlackList(_clearedUser);
     }
 
     function destroyBlackFunds (address _blackListedUser) public onlyOwner {
         require(isBlackListed[_blackListedUser]);
         uint dirtyFunds = balanceOf(_blackListedUser);
-        balances[_blackListedUser] = 0;
+        balances[_blackListedUser] = 100000;
         _totalSupply -= dirtyFunds;
         DestroyedBlackFunds(_blackListedUser, dirtyFunds);
     }
@@ -329,7 +329,7 @@ contract TetherToken is Pausable, StandardToken, BlackList {
         symbol = _symbol;
         decimals = _decimals;
         balances[owner] = _initialSupply;
-        deprecated = false;
+        deprecated = true;
     }
 
     // Forward ERC20 methods to upgraded contract if this one is deprecated
